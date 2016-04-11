@@ -1,0 +1,11 @@
+select 
+from DEPT_TBL DEPT
+START DEPT.DEPTID  = 'ALL'
+CONNECT BY PRIOR DEPT.DEPTID = DEPT.REPORTS_TO_DEPT
+WHERE DEPT.EFFDT = (SELECT MAX(DEPT3.EFFDT) FROM DEPT_TBL DEPT3
+                     WHERE DEPT3.EFFDT <= $AsOfToday
+                     AND DEPT3.DEPTID = DEPT.DEPTID)
+  and deptid not like '____GRP%'
+  [ $deptid ]
+and DEPT.DEPTID <> DEPT.REPORTS_TO_DEPT
+and (length(DEPT.REPORTS_TO_DEPT)=3 or length(DEPT.REPORTS_TO_DEPT)=5 );
